@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SARABUN PLUS | ระบบสารบรรณอิเล็กทรอนิกส์</title>
+    <!-- Google Fonts: Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #5e2a84; /* Purple */
+            --secondary: #d4af37; /* Gold */
+            --bg-color: #f4f6f9;
+        }
+        body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); color: #333; }
+        .text-primary { color: var(--primary) !important; }
+        .bg-primary { background-color: var(--primary) !important; }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background-color: #4a1f68; border-color: #4a1f68; }
+        .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+        .btn-outline-primary:hover { background-color: var(--primary); color: #fff; }
+        
+        .header-banner { width: 100%; max-height: 250px; object-fit: cover; }
+        .nav-pills .nav-link.active { background-color: var(--primary); color: white; }
+        .nav-pills .nav-link { color: var(--primary); font-weight: 500; }
+        
+        .card { border: none; border-top: 4px solid var(--secondary); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .section-view { display: none; }
+        .section-view.active { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Loading overlay */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; display: none; }
+        .spinner-border { color: var(--secondary); width: 3rem; height: 3rem; }
+        
+        .badge-status { font-weight: normal; padding: 0.5em 0.8em; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <img src="https://i.postimg.cc/QxcK2wrM/baen-nex-r-E-SARANBUN-PLUS-mhasarkham.png" alt="E-SARABUN PLUS Header" class="header-banner">
+
+    <div class="container mt-4 mb-5">
+        <!-- Navigation -->
+        <ul class="nav nav-pills justify-content-center mb-4 flex-nowrap overflow-auto pb-2" style="white-space: nowrap;">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('dashboard')"><i class="fas fa-home me-2"></i>หน้าหลัก / จัดการข้อมูล</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('receive')"><i class="fas fa-file-import me-2"></i>ลงรับหนังสือ</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('register')"><i class="fas fa-user-plus me-2"></i>ลงทะเบียนบุคลากร</a></li>
+        </ul>
+
+        <!-- 1. Dashboard & Management View -->
+        <div id="dashboard" class="section-view active">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-primary fw-bold mb-0"><i class="fas fa-folder-open me-2"></i>ทะเบียนหนังสือรับ</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadDocuments()"><i class="fas fa-sync-alt"></i> รีเฟรช</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-primary">
+                            <tr>
+                                <th>เลขหนังสือ</th>
+                                <th>เรื่อง</th>
+                                <th>ถึง</th>
+                                <th>สถานะ</th>
+                                <th>ไฟล์แนบ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="docTableBody">
+                            <tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Receive Document View -->
+        <div id="receive" class="section-view">
+            <div class="card p-4">
+                <h5 class="text-primary fw-bold mb-4"><i class="fas fa-paper-plane me-2"></i>ลงรับหนังสือ / ส่งต่อ</h5>
+                <form id="receiveForm" onsubmit="handleReceiveSubmit(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">เลขหนังสือ</label>
+                            <input type="text" class="form-control" id="docNum" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">จาก (หน่วยงานต้นทาง)</label>
+                            <input type="text" class="form-control" id="docFrom" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">เรื่อง</label>
+                            <input type="text" class="form-control" id="docSubject" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">รายละเอียด</label>
+                            <textarea class="form-control" id="docDetails" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">ส่งถึง (ผอ.กลุ่ม/หัวหน้าฝ่าย)</label>
+                            <select class="form-select" id="docTo" required>
+                                <option value="">-- เลือกผู้รับ --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">ไฟล์แนบ (PDF/รูปภาพ สูงสุด 3 ไฟล์)</label>
+                            <input type="file" class="form-control mb-2" id="file1">
+                            <input type="file" class="form-control mb-2" id="file2">
+                            <input type="file" class="form-control mb-2" id="file3">
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill"><i class="fas fa-save me-2"></i>บันทึกและส่งแจ้งเตือน</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 3. Register View -->
+        <div id="register" class="section-view">
+            <div class="card p-4">
+                <h5 class="text-primary fw-bold mb-4"><i class="fas fa-id-card me-2"></i>ลงทะเบียนบุคลากรรับอีเมล</h5>
+                <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">ชื่อ - สกุล</label>
+                            <input type="text" class="form-control" id="regName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">ตำแหน่ง</label>
+                            <input type="text" class="form-control" id="regPosition" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">กลุ่ม/ฝ่าย</label>
+                            <select class="form-select" id="regDept" required>
+                                <option value="บริหารทั่วไป">บริหารทั่วไป</option>
+                                <option value="ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม">ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม</option>
+                                <option value="ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม">ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม</option>
+                                <option value="พิธีการศพที่ได้รับพระราชทาน">พิธีการศพที่ได้รับพระราชทาน</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">สถานะ/บทบาท</label>
+                            <select class="form-select" id="regRole" required>
+                                <option value="เจ้าหน้าที่">เจ้าหน้าที่</option>
+                                <option value="ผอ.กลุ่ม/หัวหน้าฝ่าย">ผอ.กลุ่ม/หัวหน้าฝ่าย</option>
+                                <option value="วัฒนธรรมจังหวัด">วัฒนธรรมจังหวัด</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">อีเมล (สำหรับรับการแจ้งเตือน)</label>
+                            <input type="email" class="form-control" id="regEmail" required>
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill"><i class="fas fa-check me-2"></i>ลงทะเบียน</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals for Action (Assign / Return) -->
+    <div class="modal fade" id="actionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="actionModalTitle">จัดการเอกสาร</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="actionDocId">
+                    <div class="mb-3" id="assignDiv">
+                        <label class="form-label">มอบหมายให้ (เจ้าหน้าที่)</label>
+                        <select class="form-select" id="actionAssignTo"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">สถานะ</label>
+                        <select class="form-select" id="actionStatus">
+                            <option value="มอบหมายแล้ว">มอบหมายแล้ว (ดำเนินการ)</option>
+                            <option value="ตีกลับ/แก้ไข">ตีกลับ/ไม่อนุมัติ</option>
+                            <option value="เสร็จสิ้น">เสร็จสิ้น</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ข้อความ / หมายเหตุ</label>
+                        <textarea class="form-control" id="actionNote" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAction()">บันทึกข้อมูล</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner-border mb-3" role="status"></div>
+        <h5 class="text-primary fw-bold" id="loaderText">กำลังประมวลผล...</h5>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==========================================
+        // ตั้งค่า URL Web App จาก Google Apps Script
+        // ==========================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwpv28EecHmC1NqAkxh2ftKJxJnyQMxLE6WOBJFVB2g7_3_9k5O9szYui59fdapGC07/exec'; 
+        
+        let usersData = [];
+        let docsData = [];
+        let actionModal;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            actionModal = new bootstrap.Modal(document.getElementById('actionModal'));
+            loadUsers();
+            loadDocuments();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            
+            if(tabId === 'dashboard') loadDocuments();
+            if(tabId === 'receive') populateManagers();
+        }
+
+        function showLoader(text) {
+            document.getElementById('loaderText').innerText = text;
+            document.getElementById('loader').style.display = 'flex';
+        }
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        // --- Fetch API Helper ---
+        async function fetchGAS(action, payload) {
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, payload: payload })
+                });
+                const result = await response.json();
+                if(result.status === 'success') return result.data;
+                else throw new Error(result.message);
+            } catch (error) {
+                Swal.fire('ข้อผิดพลาด', error.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+                return null;
+            }
+        }
+
+        // --- Users & Registration ---
+        async function loadUsers() {
+            const data = await fetchGAS('getUsers', {});
+            if(data) {
+                usersData = data;
+                populateManagers();
+                populateStaff();
+            }
+        }
+
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('regName').value,
+                position: document.getElementById('regPosition').value,
+                department: document.getElementById('regDept').value,
+                role: document.getElementById('regRole').value,
+                email: document.getElementById('regEmail').value
+            };
+            showLoader('กำลังบันทึกข้อมูลบุคลากร...');
+            const res = await fetchGAS('register', payload);
+            hideLoader();
+            if(res) {
+                Swal.fire({ title: 'สำเร็จ', text: 'ลงทะเบียนเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#5e2a84' });
+                document.getElementById('registerForm').reset();
+                loadUsers();
+            }
+        }
+
+        function populateManagers() {
+            const select = document.getElementById('docTo');
+            select.innerHTML = '<option value="">-- เลือกผู้รับ (ผอ./หัวหน้า) --</option>';
+            usersData.filter(u => u['สถานะ'] === 'ผอ.กลุ่ม/หัวหน้าฝ่าย' || u['สถานะ'] === 'วัฒนธรรมจังหวัด').forEach(u => {
+                select.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
+            });
+        }
+        function populateStaff() {
+            const select = document.getElementById('actionAssignTo');
+            select.innerHTML = '<option value="-">-- ไม่ระบุ / ตีกลับ --</option>';
+            usersData.filter(u => u['สถานะ'] === 'เจ้าหน้าที่').forEach(u => {
+                select.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
+            });
+        }
+
+        // --- File Reader Helper ---
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                if(!file) return resolve(null);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve({ name: file.name, mimeType: file.type, base64: reader.result });
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // --- Submit Document ---
+        async function handleReceiveSubmit(e) {
+            e.preventDefault();
+            
+            const toSelect = document.getElementById('docTo');
+            const selectedOption = toSelect.options[toSelect.selectedIndex];
+            
+            showLoader('กำลังอัปโหลดและส่งข้อมูล โปรดรอสักครู่...');
+            
+            // เตรียมไฟล์
+            const f1 = document.getElementById('file1').files[0];
+            const f2 = document.getElementById('file2').files[0];
+            const f3 = document.getElementById('file3').files[0];
+            
+            const files = [];
+            if(f1) files.push(await getBase64(f1));
+            if(f2) files.push(await getBase64(f2));
+            if(f3) files.push(await getBase64(f3));
+
+            const payload = {
+                docNum: document.getElementById('docNum').value,
+                from: document.getElementById('docFrom').value,
+                subject: document.getElementById('docSubject').value,
+                details: document.getElementById('docDetails').value,
+                toName: selectedOption.value,
+                toEmail: selectedOption.dataset.email,
+                files: files
+            };
+
+            const res = await fetchGAS('submitDoc', payload);
+            hideLoader();
+            if(res) {
+                Swal.fire({ title: 'ส่งสำเร็จ', text: 'ส่งข้อมูลและอีเมลแจ้งเตือนเรียบร้อย', icon: 'success', confirmButtonColor: '#5e2a84' });
+                document.getElementById('receiveForm').reset();
+                switchTab('dashboard');
+            }
+        }
+
+        // --- Dashboard & Actions ---
+        async function loadDocuments() {
+            showLoader('กำลังโหลดข้อมูล...');
+            const data = await fetchGAS('getDocs', {});
+            hideLoader();
+            const tbody = document.getElementById('docTableBody');
+            tbody.innerHTML = '';
+            
+            if(!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">ไม่มีข้อมูล</td></tr>';
+                return;
+            }
+            
+            data.forEach(doc => {
+                // จัดการสีสถานะ
+                let badgeClass = 'bg-secondary';
+                if(doc['สถานะ'] === 'รอการพิจารณา') badgeClass = 'bg-warning text-dark';
+                if(doc['สถานะ'] === 'มอบหมายแล้ว') badgeClass = 'bg-info text-dark';
+                if(doc['สถานะ'].includes('ตีกลับ')) badgeClass = 'bg-danger';
+                if(doc['สถานะ'] === 'เสร็จสิ้น') badgeClass = 'bg-success';
+
+                // จัดการปุ่มไฟล์แนบ
+                let filesHtml = '';
+                if(doc['ไฟล์ 1']) filesHtml += `<a href="${doc['ไฟล์ 1']}" target="_blank" class="badge bg-primary text-decoration-none me-1"><i class="fas fa-paperclip"></i> 1</a>`;
+                if(doc['ไฟล์ 2']) filesHtml += `<a href="${doc['ไฟล์ 2']}" target="_blank" class="badge bg-primary text-decoration-none me-1"><i class="fas fa-paperclip"></i> 2</a>`;
+                if(doc['ไฟล์ 3']) filesHtml += `<a href="${doc['ไฟล์ 3']}" target="_blank" class="badge bg-primary text-decoration-none"><i class="fas fa-paperclip"></i> 3</a>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="fw-bold">${doc['เลขหนังสือ']}</span></td>
+                        <td>${doc['เรื่อง']}<br><small class="text-muted">จาก: ${doc['จาก']}</small></td>
+                        <td>${doc['ถึง']}</td>
+                        <td><span class="badge badge-status ${badgeClass}">${doc['สถานะ']}</span></td>
+                        <td>${filesHtml || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary mb-1" onclick="openActionModal('${doc['DocID']}')">จัดการ</button>
+                            <button class="btn btn-sm btn-outline-danger mb-1" onclick="deleteDoc('${doc['DocID']}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openActionModal(docId) {
+            document.getElementById('actionDocId').value = docId;
+            document.getElementById('actionAssignTo').value = '-';
+            document.getElementById('actionStatus').value = 'มอบหมายแล้ว';
+            document.getElementById('actionNote').value = '';
+            actionModal.show();
+        }
+
+        async function submitAction() {
+            const docId = document.getElementById('actionDocId').value;
+            const assignSelect = document.getElementById('actionAssignTo');
+            const assignedTo = assignSelect.value;
+            let targetEmail = '';
+            
+            // หาอีเมลเป้าหมาย ถ้ามอบหมายดึงเมลเจ้าหน้าที่
+            if(assignedTo !== '-') {
+                const opt = assignSelect.options[assignSelect.selectedIndex];
+                targetEmail = opt.dataset.email;
+            }
+
+            const payload = {
+                docId: docId,
+                status: document.getElementById('actionStatus').value,
+                assignedTo: assignedTo,
+                note: document.getElementById('actionNote').value,
+                targetEmail: targetEmail
+            };
+
+            actionModal.hide();
+            showLoader('กำลังอัปเดตข้อมูลและส่งแจ้งเตือน...');
+            const res = await fetchGAS('updateDocStatus', payload);
+            hideLoader();
+            
+            if(res) {
+                Swal.fire({ title: 'สำเร็จ', text: 'อัปเดตสถานะเรียบร้อย', icon: 'success', confirmButtonColor: '#5e2a84' });
+                loadDocuments();
+            }
+        }
+
+        async function deleteDoc(docId) {
+            const confirm = await Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: 'คุณต้องการลบข้อมูลนี้ใช่หรือไม่? (ไม่สามารถกู้คืนได้)',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if(confirm.isConfirmed) {
+                showLoader('กำลังลบข้อมูล...');
+                const res = await fetchGAS('deleteDoc', { id: docId });
+                hideLoader();
+                if(res) {
+                    Swal.fire('ลบสำเร็จ', 'ข้อมูลถูกลบออกจากระบบแล้ว', 'success');
+                    loadDocuments();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
