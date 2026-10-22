@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-SARABUN PLUS | ระบบสารบรรณอิเล็กทรอนิกส์</title>
+    <title>E-SARABUN PLUS | สวจ.มหาสารคาม</title>
     
     <!-- Google Fonts: Prompt -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,10 +16,12 @@
     
     <style>
         :root {
-            --primary: #1e3a8a; /* Deep Navy Blue */
-            --primary-light: #3b82f6; /* Bright Blue */
-            --bg-color: #f1f5f9;
+            --primary: #1e3a8a; /* Deep Blue */
+            --primary-light: #3b82f6;
+            --dark-card: #0f172a; /* Slate 900 for Dark Cards */
+            --bg-color: #f0f4f8;
             --text-dark: #1e293b;
+            --success: #10b981; /* Green Progress */
         }
 
         body { 
@@ -30,186 +32,257 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Curved Header Background */
+        /* Top Header Curve */
         .header-curve {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
-            height: 220px;
-            width: 100%;
-            position: absolute;
-            top: 0; left: 0;
-            z-index: -1;
-            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.15);
+            height: 240px; width: 100%;
+            position: absolute; top: 0; left: 0; z-index: 0;
         }
 
-        .header-content { padding-top: 30px; }
-
-        /* Main Container (Overlapping) */
-        .main-container { margin-top: 120px; }
-
-        /* Custom Banner Image */
-        .custom-banner {
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            max-height: 120px;
-            object-fit: cover;
-            width: 100%;
-            margin-bottom: 20px;
-            background: #fff;
-            padding: 5px;
+        .header-content {
+            position: relative; z-index: 10;
+            padding: 30px 20px 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* UI Cards */
-        .glass-card {
-            background: #ffffff;
+        /* Main Container */
+        .main-container { position: relative; z-index: 20; padding: 0 15px; margin-top: 20px; }
+
+        /* Dashboard Hero Card (Dark) */
+        .hero-card {
+            background: var(--dark-card);
             border-radius: 24px;
-            border: none;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
             padding: 24px;
-            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
         }
-
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
-            border: none; 
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
-        }
-
-        /* Forms (Floating Labels) */
-        .form-floating > .form-control, .form-floating > .form-select {
-            border-radius: 16px;
-            border: 1.5px solid #e2e8f0;
-            background-color: #f8fafc;
-        }
-        .form-floating > .form-control:focus, .form-floating > .form-select:focus {
-            border-color: var(--primary-light);
-            background-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        }
-
-        /* Document Item Card */
-        .doc-item {
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border-left: 6px solid var(--primary-light);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-        .doc-item:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .doc-title { font-size: 1.15rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
-        .badge-custom { padding: 8px 14px; border-radius: 30px; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.5px; }
-
-        .file-pill {
-            background: #e2e8f0; color: var(--primary);
-            padding: 6px 14px; border-radius: 20px;
-            text-decoration: none; font-size: 0.85rem; font-weight: 500;
-            display: inline-block; margin-right: 6px; margin-bottom: 6px;
-            transition: all 0.2s;
-        }
-        .file-pill:hover { background: var(--primary); color: #fff; }
-
-        /* View Transition */
-        .section-view { display: none; opacity: 0; transform: translateY(15px); transition: all 0.4s ease-out; }
-        .section-view.active { display: block; opacity: 1; transform: translateY(0); }
-
-        /* Bottom Navigation (Center FAB Style) */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            height: 75px; background: #ffffff;
-            display: flex; justify-content: space-evenly; align-items: center;
-            border-radius: 35px 35px 0 0;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.06);
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #94a3b8; cursor: pointer; transition: all 0.3s;
-            width: 65px;
-        }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.3rem; margin-bottom: 5px; transition: transform 0.3s; }
-        .nav-item.active i { transform: translateY(-3px); }
-        .nav-item span { font-size: 0.75rem; font-weight: 500; }
         
-        /* The Floating Action Button (FAB) */
-        .fab-wrapper { position: relative; width: 75px; height: 75px; }
-        .fab-button {
-            position: absolute; top: -35px; left: 5px;
-            width: 65px; height: 65px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        /* Circular Progress Indicator */
+        .progress-circle {
+            width: 70px; height: 70px;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 1.6rem;
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-            border: 6px solid var(--bg-color);
-            transition: transform 0.3s;
+            background: conic-gradient(var(--success) 0%, #1e293b 0%);
+            position: relative;
         }
-        .fab-button:active { transform: scale(0.92); }
+        .progress-circle::after {
+            content: ""; position: absolute;
+            width: 54px; height: 54px;
+            background: var(--dark-card);
+            border-radius: 50%;
+        }
+        .progress-value { position: relative; z-index: 10; font-weight: 700; font-size: 1.1rem; }
 
-        /* Footer */
-        .custom-footer { text-align: center; padding: 15px; font-size: 0.85rem; color: #64748b; font-weight: 500; }
+        .btn-action-dark {
+            background: var(--primary-light); color: white;
+            border: none; border-radius: 12px; padding: 8px 16px;
+            font-size: 0.85rem; font-weight: 500;
+        }
 
-        /* Loader Overlay */
+        /* Menu Grid (Menu Utama) */
+        .menu-header { font-weight: 600; font-size: 1.1rem; margin-bottom: 12px; color: var(--text-dark); }
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 25px;
+        }
+        .menu-item {
+            background: #e0f2fe; border-radius: 16px;
+            padding: 15px 5px; display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; color: var(--primary); transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            cursor: pointer;
+        }
+        .menu-item.active { background: var(--dark-card); color: white; }
+        .menu-item i { font-size: 1.5rem; margin-bottom: 8px; }
+        .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; line-height: 1.2; }
+
+        /* Horizontal Scroll Cards (Kategori) */
+        .h-scroll-container {
+            display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .h-scroll-container::-webkit-scrollbar { display: none; } /* Chrome */
+        .status-card {
+            min-width: 140px; background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 16px; padding: 15px; color: white; flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer;
+            border-bottom: 4px solid transparent;
+        }
+        .status-card.pending { border-bottom-color: #f59e0b; }
+        .status-card.assigned { border-bottom-color: #3b82f6; }
+        .status-card.completed { border-bottom-color: #10b981; }
+        .status-count { font-size: 1.8rem; font-weight: 700; line-height: 1; margin: 10px 0; }
+
+        /* Document List Card */
+        .doc-item {
+            background: #ffffff; border-radius: 16px; padding: 18px; margin-bottom: 12px;
+            border-left: 5px solid var(--primary-light);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+        .badge-custom { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
+            background: #ffffff; display: flex; justify-content: space-around; align-items: center;
+            border-radius: 24px 24px 0 0; box-shadow: 0 -5px 25px rgba(0,0,0,0.06);
+            z-index: 1000; padding: 0 10px;
+        }
+        .nav-link-btn {
+            display: flex; flex-direction: column; align-items: center;
+            color: #94a3b8; text-decoration: none; width: 60px; transition: 0.3s;
+            background: none; border: none; padding: 0;
+        }
+        .nav-link-btn.active { color: var(--primary); }
+        .nav-link-btn i { font-size: 1.3rem; margin-bottom: 4px; transition: 0.3s; }
+        .nav-link-btn.active i { transform: translateY(-3px); }
+        .nav-link-btn span { font-size: 0.7rem; font-weight: 600; }
+
+        /* Floating Center FAB with Text */
+        .fab-container { position: relative; width: 70px; height: 75px; display: flex; flex-direction: column; align-items: center; }
+        .fab-button {
+            position: absolute; top: -25px;
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 1.5rem;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            border: 4px solid var(--bg-color); cursor: pointer; transition: 0.3s;
+        }
+        .fab-button:active { transform: scale(0.95); }
+        .fab-text { position: absolute; bottom: 8px; font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-align: center; width: 100%; }
+        .fab-container.active .fab-text { color: var(--primary); }
+
+        /* View Control */
+        .section-view { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
+        .section-view.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Forms */
+        .glass-form { background: white; border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-floating > .form-control, .form-floating > .form-select { border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); border: none; }
+
+        /* Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);
             z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center;
         }
-        .spinner-grow { color: var(--primary-light); width: 4rem; height: 4rem; }
+        .spinner-border { color: var(--primary-light); }
+        
+        .footer { text-align: center; font-size: 0.75rem; color: #94a3b8; margin: 20px 0 30px 0; }
     </style>
 </head>
 <body>
 
-    <!-- Background Curve -->
-    <div class="header-curve">
-        <div class="header-content text-center text-white">
-            <h4 class="fw-bold mb-1" style="letter-spacing: 1px;"><i class="fas fa-layer-group me-2"></i>E-SARABUN PLUS</h4>
-            <p class="small opacity-75">ระบบสารบรรณอิเล็กทรอนิกส์</p>
+    <!-- Header Area -->
+    <div class="header-curve"></div>
+    <div class="header-content">
+        <div class="d-flex align-items-center">
+            <div class="bg-white rounded-circle p-2 me-3 shadow-sm d-flex justify-content-center align-items-center" style="width: 45px; height: 45px;">
+                <img src="https://i.postimg.cc/QxcK2wrM/baen-nex-r-E-SARANBUN-PLUS-mhasarkham.png" style="width: 100%; border-radius: 50%;">
+            </div>
+            <div class="text-white">
+                <h5 class="mb-0 fw-bold">E-SARABUN PLUS</h5>
+                <small class="opacity-75">สวจ.มหาสารคาม</small>
+            </div>
+        </div>
+        <div class="text-white position-relative">
+            <i class="fas fa-bell fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
         </div>
     </div>
 
     <div class="container main-container">
         
-        <!-- Banner Image Overlay -->
-        <img src="https://i.postimg.cc/QxcK2wrM/baen-nex-r-E-SARANBUN-PLUS-mhasarkham.png" alt="Banner" class="custom-banner">
-
         <!-- 1. Dashboard View -->
         <div id="dashboard" class="section-view active">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="text-primary fw-bold mb-0"><i class="fas fa-inbox me-2"></i>ทะเบียนหนังสือล่าสุด</h5>
-                    <button class="btn btn-light rounded-circle shadow-sm" onclick="loadDocuments()" style="width:40px; height:40px; color: var(--primary);">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-                
-                <div id="docContainer">
-                    <div class="text-center p-5 text-muted">
-                        <div class="spinner-border text-primary" role="status"></div>
-                        <p class="mt-2">กำลังโหลดข้อมูล...</p>
+            
+            <!-- Dashboard Hero Stat Card -->
+            <div class="hero-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-white-50">ภาพรวมระบบ (ปีปัจจุบัน)</h6>
+                        <h4 class="mb-0 fw-bold">หนังสือรับ <span id="statYearly" class="text-info">0</span> รายการ</h4>
+                    </div>
+                    <div class="progress-circle" id="statProgress" style="background: conic-gradient(var(--success) 0%, #1e293b 0%);">
+                        <span class="progress-value" id="statPercent">0%</span>
                     </div>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                    <div>
+                        <span class="small text-white-50">เฉพาะเดือนนี้:</span>
+                        <span class="fw-bold ms-1" id="statMonthly">0</span>
+                    </div>
+                    <button class="btn-action-dark" onclick="loadDocuments()"><i class="fas fa-sync-alt me-1"></i> รีเฟรช</button>
+                </div>
+            </div>
+
+            <!-- Menu Utama (Grid) -->
+            <div class="menu-header">เมนูจัดการหลัก</div>
+            <div class="menu-grid">
+                <div class="menu-item active" onclick="filterDocs('all')">
+                    <i class="fas fa-book-open"></i>
+                    <span>ทั้งหมด</span>
+                </div>
+                <div class="menu-item" onclick="filterDocs('รอการพิจารณา')">
+                    <i class="fas fa-hourglass-half text-warning"></i>
+                    <span>รอดำเนินการ</span>
+                </div>
+                <div class="menu-item" onclick="filterDocs('มอบหมายแล้ว')">
+                    <i class="fas fa-user-check text-primary"></i>
+                    <span>มอบหมายแล้ว</span>
+                </div>
+                <div class="menu-item" onclick="filterDocs('เสร็จสิ้น')">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>เสร็จสิ้น</span>
+                </div>
+            </div>
+
+            <!-- Horizontal Scroll Kategori -->
+            <div class="menu-header d-flex justify-content-between align-items-end">
+                <span>สถิติแยกตามสถานะ</span>
+            </div>
+            <div class="h-scroll-container mb-4">
+                <div class="status-card pending">
+                    <div class="small text-white-50">รอการพิจารณา</div>
+                    <div class="status-count" id="statPending">0</div>
+                    <div class="small"><i class="fas fa-clock me-1"></i>รายการ</div>
+                </div>
+                <div class="status-card assigned">
+                    <div class="small text-white-50">มอบหมายงานแล้ว</div>
+                    <div class="status-count" id="statAssigned">0</div>
+                    <div class="small"><i class="fas fa-users me-1"></i>รายการ</div>
+                </div>
+                <div class="status-card completed">
+                    <div class="small text-white-50">ดำเนินการเสร็จสิ้น</div>
+                    <div class="status-count" id="statCompleted">0</div>
+                    <div class="small"><i class="fas fa-check me-1"></i>รายการ</div>
+                </div>
+            </div>
+
+            <!-- Document List -->
+            <div class="menu-header"><i class="fas fa-list me-2"></i>รายการหนังสือ <span id="currentFilterText" class="badge bg-primary ms-2 rounded-pill fw-normal">ทั้งหมด</span></div>
+            <div id="docContainer">
+                <div class="text-center p-4 text-muted">กำลังโหลดข้อมูล...</div>
             </div>
         </div>
 
-        <!-- 2. Receive Document View -->
+        <!-- 2. Receive Form View -->
         <div id="receive" class="section-view">
-            <div class="glass-card">
-                <h5 class="text-primary fw-bold mb-4 text-center"><i class="fas fa-pen-nib me-2"></i>ลงรับหนังสือใหม่</h5>
+            <div class="glass-form mb-4">
+                <h5 class="text-primary fw-bold mb-4 text-center"><i class="fas fa-plus-circle me-2"></i>ลงรับหนังสือใหม่</h5>
                 <form id="receiveForm" onsubmit="handleReceiveSubmit(event)">
                     <div class="row g-3">
                         <div class="col-12">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="docNum" placeholder="เลขหนังสือ" required>
-                                <label>เลขหนังสือ</label>
+                                <label>เลขที่หนังสือ</label>
                             </div>
                         </div>
                         <div class="col-12">
@@ -227,7 +300,7 @@
                         <div class="col-12">
                             <div class="form-floating">
                                 <textarea class="form-control" id="docDetails" placeholder="รายละเอียด" style="height: 100px"></textarea>
-                                <label>รายละเอียด (ถ้ามี)</label>
+                                <label>รายละเอียดเพิ่มเติม</label>
                             </div>
                         </div>
                         <div class="col-12">
@@ -239,9 +312,9 @@
                             </div>
                         </div>
                         
-                        <div class="col-12 mt-3">
-                            <div class="p-3 bg-light rounded-4 border">
-                                <label class="form-label text-muted small fw-bold mb-2"><i class="fas fa-paperclip me-1"></i>ไฟล์แนบ (อัปโหลดได้สูงสุด 3 ไฟล์)</label>
+                        <div class="col-12 mt-2">
+                            <div class="p-3 bg-light rounded-3 border border-dashed">
+                                <label class="form-label text-muted small fw-bold mb-2"><i class="fas fa-paperclip me-1"></i>แนบไฟล์ (สูงสุด 3 ไฟล์)</label>
                                 <input type="file" class="form-control form-control-sm mb-2" id="file1">
                                 <input type="file" class="form-control form-control-sm mb-2" id="file2">
                                 <input type="file" class="form-control form-control-sm" id="file3">
@@ -249,8 +322,8 @@
                         </div>
 
                         <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary rounded-pill py-3 w-100 fw-bold fs-6">
-                                <i class="fas fa-paper-plane me-2"></i>บันทึกและส่งข้อมูล
+                            <button type="submit" class="btn btn-primary rounded-pill py-3 w-100 fw-bold text-white shadow-sm">
+                                <i class="fas fa-paper-plane me-2"></i>บันทึกและส่งแจ้งเตือน
                             </button>
                         </div>
                     </div>
@@ -260,10 +333,13 @@
 
         <!-- 3. Register View -->
         <div id="register" class="section-view">
-            <div class="glass-card">
+            <div class="glass-form mb-4">
                 <div class="text-center mb-4">
-                    <h5 class="text-primary fw-bold"><i class="fas fa-user-shield me-2"></i>ลงทะเบียนบุคลากร</h5>
-                    <p class="text-muted small">ระบบแจ้งเตือนผ่านอีเมลส่วนตัว</p>
+                    <div class="d-inline-block p-3 rounded-circle bg-primary text-white mb-3" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                    </div>
+                    <h5 class="text-primary fw-bold">จัดการบุคลากร</h5>
+                    <p class="text-muted small">ลงทะเบียนเพื่อรับการแจ้งเตือนทางอีเมล</p>
                 </div>
                 
                 <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
@@ -298,7 +374,7 @@
                                     <option value="ผอ.กลุ่ม/หัวหน้าฝ่าย">ผอ.กลุ่ม/หัวหน้าฝ่าย</option>
                                     <option value="วัฒนธรรมจังหวัด">วัฒนธรรมจังหวัด</option>
                                 </select>
-                                <label>สถานะ/บทบาท</label>
+                                <label>สถานะ / บทบาท</label>
                             </div>
                         </div>
                         <div class="col-12">
@@ -308,8 +384,8 @@
                             </div>
                         </div>
                         <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary rounded-pill py-3 w-100 fw-bold fs-6">
-                                <i class="fas fa-check-circle me-2"></i>ยืนยันการลงทะเบียน
+                            <button type="submit" class="btn btn-primary rounded-pill py-3 w-100 fw-bold text-white shadow-sm">
+                                <i class="fas fa-check-circle me-2"></i>ลงทะเบียน
                             </button>
                         </div>
                     </div>
@@ -317,83 +393,97 @@
             </div>
         </div>
         
-        <!-- Footer -->
-        <div class="custom-footer">
+        <div class="footer">
             นายอุทยาน ไพรวัลย์ นวธ. สวจ.มหาสารคาม : ผู้พัฒนาระบบ
         </div>
 
     </div>
 
-    <!-- Center FAB Bottom Navigation -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('dashboard', this)">
+        <!-- 1. Home -->
+        <button class="nav-link-btn active" onclick="switchTab('dashboard', this)">
             <i class="fas fa-home"></i>
             <span>หน้าหลัก</span>
-        </div>
+        </button>
         
-        <!-- Center Floating Button -->
-        <div class="nav-item fab-wrapper" onclick="switchTab('receive', this)">
+        <!-- 2. Search / Reports -->
+        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterDocs('all');">
+            <i class="fas fa-search"></i>
+            <span>ค้นหา</span>
+        </button>
+
+        <!-- 3. Center FAB (Add) -->
+        <div class="fab-container" onclick="switchTab('receive', this)">
             <div class="fab-button">
                 <i class="fas fa-plus"></i>
             </div>
-            <span style="position: absolute; bottom: -20px; font-size: 0.75rem; font-weight: 500; color: #94a3b8; width: 100%; text-align: center;">ลงรับ</span>
+            <div class="fab-text">ลงรับ</div>
         </div>
-        
-        <div class="nav-item" onclick="switchTab('register', this)">
-            <i class="fas fa-user-cog"></i>
+
+        <!-- 4. Notifications / Status -->
+        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterDocs('รอการพิจารณา');">
+            <i class="fas fa-file-alt"></i>
+            <span>เอกสาร</span>
+        </button>
+
+        <!-- 5. User / Profile -->
+        <button class="nav-link-btn" onclick="switchTab('register', this)">
+            <i class="fas fa-user"></i>
             <span>บุคลากร</span>
-        </div>
+        </button>
     </div>
 
     <!-- Action Modal -->
     <div class="modal fade" id="actionModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 24px; border: none; overflow: hidden;">
-                <div class="modal-header text-white" style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); border: none;">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-tasks me-2"></i>จัดการเอกสาร</h6>
+            <div class="modal-content" style="border-radius: 20px; border: none;">
+                <div class="modal-header text-white" style="background: var(--dark-card); border: none;">
+                    <h6 class="modal-title fw-bold">จัดการสถานะหนังสือ</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4 bg-light">
                     <input type="hidden" id="actionDocId">
                     <div class="form-floating mb-3">
-                        <select class="form-select bg-white" id="actionAssignTo"></select>
+                        <select class="form-select" id="actionAssignTo"></select>
                         <label>มอบหมายงานให้</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select class="form-select bg-white" id="actionStatus">
-                            <option value="มอบหมายแล้ว">มอบหมายแล้ว (กำลังดำเนินการ)</option>
-                            <option value="ตีกลับ/แก้ไข">ตีกลับ/แก้ไขข้อมูล</option>
-                            <option value="เสร็จสิ้น">ดำเนินการเสร็จสิ้น</option>
+                        <select class="form-select" id="actionStatus">
+                            <option value="มอบหมายแล้ว">มอบหมายแล้ว (ดำเนินการ)</option>
+                            <option value="ตีกลับ/แก้ไข">ตีกลับ/แก้ไข</option>
+                            <option value="เสร็จสิ้น">เสร็จสิ้น</option>
                         </select>
-                        <label>อัปเดตสถานะ</label>
+                        <label>สถานะ</label>
                     </div>
                     <div class="form-floating">
-                        <textarea class="form-control bg-white" id="actionNote" placeholder="หมายเหตุ" style="height: 90px"></textarea>
-                        <label>ข้อความสั่งการ / หมายเหตุ</label>
+                        <textarea class="form-control" id="actionNote" placeholder="หมายเหตุ" style="height: 80px"></textarea>
+                        <label>หมายเหตุ / ข้อความสั่งการ</label>
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-0 pt-0 justify-content-center pb-4">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-5 shadow" onclick="submitAction()">บันทึก</button>
+                <div class="modal-footer bg-light border-0 justify-content-center pb-4 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-5" onclick="submitAction()">บันทึก</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Animated Loader -->
+    <!-- Loader -->
     <div id="loader">
-        <div class="spinner-grow mb-3" role="status"></div>
-        <h5 class="text-primary fw-bold" id="loaderText">กำลังประมวลผล...</h5>
+        <div class="spinner-border mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h6 class="text-primary fw-bold" id="loaderText">กำลังประมวลผล...</h6>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // ==========================================
-        // URL Web App จาก Google Apps Script (ที่ให้มา)
+        // URL Web App จาก Google Apps Script (สำคัญ)
         // ==========================================
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwpv28EecHmC1NqAkxh2ftKJxJnyQMxLE6WOBJFVB2g7_3_9k5O9szYui59fdapGC07/exec'; 
         
         let usersData = [];
+        let allDocsData = []; // เก็บข้อมูลหนังสือทั้งหมด
         let actionModal;
 
         const Toast = Swal.mixin({
@@ -411,6 +501,7 @@
             loadDocuments();
         });
 
+        // Tab Switch & Nav Styling
         function switchTab(tabId, el) {
             document.querySelectorAll('.section-view').forEach(e => {
                 e.classList.remove('active');
@@ -423,24 +514,9 @@
                 setTimeout(() => target.classList.add('active'), 50);
             }, 50);
 
-            // จัดการสีไอคอน Bottom Nav
-            document.querySelectorAll('.nav-item').forEach(e => {
-                e.classList.remove('active');
-                if(e.querySelector('span')) e.querySelector('span').style.color = '#94a3b8';
-                if(e.classList.contains('fab-wrapper')) e.querySelector('.fab-button').style.transform = 'scale(1)';
-            });
-            
-            el.classList.add('active');
-            if(el.querySelector('span') && !el.classList.contains('fab-wrapper')) {
-                el.querySelector('span').style.color = 'var(--primary)';
-            }
-            if(el.classList.contains('fab-wrapper')) {
-                el.querySelector('.fab-button').style.transform = 'scale(1.1)';
-                el.querySelector('span').style.color = 'var(--primary)';
-            }
-            
-            if(tabId === 'dashboard') loadDocuments();
-            if(tabId === 'receive') populateManagers();
+            // รีเซ็ตปุ่มใน Bottom Nav
+            document.querySelectorAll('.nav-link-btn, .fab-container').forEach(e => e.classList.remove('active'));
+            if(el) el.classList.add('active');
         }
 
         function showLoader(text) {
@@ -453,7 +529,7 @@
             if(!dateStr) return '';
             const d = new Date(dateStr);
             const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543} เวลา ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`;
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;
         }
 
         async function fetchGAS(action, payload) {
@@ -466,36 +542,28 @@
                 if(result.status === 'success') return result.data;
                 else throw new Error(result.message);
             } catch (error) {
-                Swal.fire({icon: 'error', title: 'ข้อผิดพลาด', text: error.message || 'การเชื่อมต่อขัดข้อง', confirmButtonColor: '#1e3a8a'});
+                Swal.fire({icon: 'error', title: 'ข้อผิดพลาด', text: error.message});
                 return null;
             }
         }
 
+        // --- Users & Register ---
         async function loadUsers() {
             const data = await fetchGAS('getUsers', {});
             if(data) {
                 usersData = data;
-                populateManagers();
-                populateStaff();
+                const select = document.getElementById('docTo');
+                select.innerHTML = '<option value="">-- เลือก ผอ./หัวหน้า --</option>';
+                usersData.filter(u => u['สถานะ'] === 'ผอ.กลุ่ม/หัวหน้าฝ่าย' || u['สถานะ'] === 'วัฒนธรรมจังหวัด').forEach(u => {
+                    select.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
+                });
+                
+                const selectStaff = document.getElementById('actionAssignTo');
+                selectStaff.innerHTML = '<option value="-">-- ไม่ระบุ --</option>';
+                usersData.filter(u => u['สถานะ'] === 'เจ้าหน้าที่').forEach(u => {
+                    selectStaff.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
+                });
             }
-        }
-
-        function populateManagers() {
-            const select = document.getElementById('docTo');
-            select.innerHTML = '<option value="">-- เลือก ผอ./หัวหน้า --</option>';
-            const managers = usersData.filter(u => u['สถานะ'] === 'ผอ.กลุ่ม/หัวหน้าฝ่าย' || u['สถานะ'] === 'วัฒนธรรมจังหวัด');
-            managers.forEach(u => {
-                select.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
-            });
-        }
-        
-        function populateStaff() {
-            const select = document.getElementById('actionAssignTo');
-            select.innerHTML = '<option value="-">-- ไม่ระบุ / ตีกลับ --</option>';
-            const staffs = usersData.filter(u => u['สถานะ'] === 'เจ้าหน้าที่');
-            staffs.forEach(u => {
-                select.innerHTML += `<option value="${u['ชื่อ-สกุล']}" data-email="${u['อีเมล']}">${u['ชื่อ-สกุล']} (${u['กลุ่ม/ฝ่าย']})</option>`;
-            });
         }
 
         async function handleRegisterSubmit(e) {
@@ -507,16 +575,17 @@
                 role: document.getElementById('regRole').value,
                 email: document.getElementById('regEmail').value
             };
-            showLoader('กำลังบันทึกข้อมูลบุคลากร...');
+            showLoader('กำลังบันทึก...');
             const res = await fetchGAS('register', payload);
             hideLoader();
             if(res) {
-                Swal.fire({ title: 'สำเร็จ!', text: 'ลงทะเบียนเข้าสู่ระบบเรียบร้อย', icon: 'success', confirmButtonColor: '#1e3a8a' });
+                Swal.fire({ title: 'สำเร็จ!', text: 'ลงทะเบียนเรียบร้อย', icon: 'success' });
                 document.getElementById('registerForm').reset();
                 loadUsers();
             }
         }
 
+        // --- Submit Doc ---
         function getBase64(file) {
             return new Promise((resolve, reject) => {
                 if(!file) return resolve(null);
@@ -532,7 +601,7 @@
             const toSelect = document.getElementById('docTo');
             const selectedOption = toSelect.options[toSelect.selectedIndex];
             
-            showLoader('กำลังอัปโหลดไฟล์และส่งอีเมลแจ้งเตือน...');
+            showLoader('กำลังอัปโหลดและส่งอีเมล...');
             const files = [];
             for (let i = 1; i <= 3; i++) {
                 const f = document.getElementById(`file${i}`).files[0];
@@ -552,30 +621,71 @@
             const res = await fetchGAS('submitDoc', payload);
             hideLoader();
             if(res) {
-                Swal.fire({ title: 'ส่งสำเร็จ', text: 'ระบบส่งหนังสือและแจ้งเตือนเรียบร้อย', icon: 'success', confirmButtonColor: '#1e3a8a' });
+                Swal.fire({ title: 'ส่งสำเร็จ', icon: 'success' });
                 document.getElementById('receiveForm').reset();
-                switchTab('dashboard', document.querySelectorAll('.nav-item')[0]);
+                switchTab('dashboard', document.querySelectorAll('.nav-link-btn')[0]);
+                loadDocuments();
             }
         }
 
+        // --- Dashboard & Docs ---
         async function loadDocuments() {
-            showLoader('กำลังดึงข้อมูลหนังสือ...');
-            const data = await fetchGAS('getDocs', {});
+            showLoader('กำลังอัปเดตข้อมูล...');
+            
+            // โหลดเอกสาร
+            allDocsData = await fetchGAS('getDocs', {}) || [];
+            
+            // โหลดสถิติ
+            const stats = await fetchGAS('getStats', {});
+            
             hideLoader();
             
+            // อัปเดต UI Dashboard
+            if(stats) {
+                document.getElementById('statYearly').innerText = stats.yearly;
+                document.getElementById('statMonthly').innerText = stats.monthly;
+                document.getElementById('statPercent').innerText = stats.progressPercent + '%';
+                
+                // วาดกราฟวงกลม
+                document.getElementById('statProgress').style.background = `conic-gradient(var(--success) ${stats.progressPercent}%, #1e293b 0%)`;
+                
+                document.getElementById('statPending').innerText = stats.pending;
+                document.getElementById('statAssigned').innerText = stats.assigned;
+                document.getElementById('statCompleted').innerText = stats.completed;
+            }
+
+            // แสดงรายการทั้งหมดเริ่มต้น
+            renderDocs('all');
+        }
+
+        // ฟังก์ชัน Filter และ Render การ์ด
+        function filterDocs(status) {
+            // อัปเดตปุ่ม Menu Grid ให้ Active
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            const clickedMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(status === 'all' ? 'ทั้งหมด' : (status === 'รอการพิจารณา' ? 'รอดำเนิน' : status)));
+            if(clickedMenu) clickedMenu.classList.add('active');
+
+            // อัปเดต Text Header
+            document.getElementById('currentFilterText').innerText = status === 'all' ? 'ทั้งหมด' : status;
+
+            renderDocs(status);
+        }
+
+        function renderDocs(filterStatus) {
             const container = document.getElementById('docContainer');
             container.innerHTML = '';
             
-            if(!data || data.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center p-5 text-muted">
-                        <i class="fas fa-folder-open fa-3x mb-3" style="color: #cbd5e1;"></i>
-                        <br>ไม่มีรายการหนังสือในขณะนี้
-                    </div>`;
+            let filteredData = allDocsData;
+            if (filterStatus !== 'all') {
+                filteredData = allDocsData.filter(doc => doc['สถานะ'].includes(filterStatus));
+            }
+            
+            if(filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center p-4 text-muted"><i class="fas fa-inbox fa-2x mb-2 opacity-50"></i><br>ไม่มีข้อมูล</div>`;
                 return;
             }
             
-            data.forEach(doc => {
+            filteredData.forEach(doc => {
                 let badgeClass = 'bg-secondary';
                 if(doc['สถานะ'] === 'รอการพิจารณา') badgeClass = 'bg-warning text-dark';
                 if(doc['สถานะ'] === 'มอบหมายแล้ว') badgeClass = 'bg-info text-dark';
@@ -583,32 +693,30 @@
                 if(doc['สถานะ'] === 'เสร็จสิ้น') badgeClass = 'bg-success';
 
                 let filesHtml = '';
-                if(doc['ไฟล์ 1']) filesHtml += `<a href="${doc['ไฟล์ 1']}" target="_blank" class="file-pill"><i class="fas fa-file-pdf"></i> เอกสาร 1</a>`;
-                if(doc['ไฟล์ 2']) filesHtml += `<a href="${doc['ไฟล์ 2']}" target="_blank" class="file-pill"><i class="fas fa-file-pdf"></i> เอกสาร 2</a>`;
-                if(doc['ไฟล์ 3']) filesHtml += `<a href="${doc['ไฟล์ 3']}" target="_blank" class="file-pill"><i class="fas fa-file-pdf"></i> เอกสาร 3</a>`;
+                if(doc['ไฟล์ 1']) filesHtml += `<a href="${doc['ไฟล์ 1']}" target="_blank" class="badge bg-light text-primary border text-decoration-none me-1"><i class="fas fa-paperclip"></i> 1</a>`;
+                if(doc['ไฟล์ 2']) filesHtml += `<a href="${doc['ไฟล์ 2']}" target="_blank" class="badge bg-light text-primary border text-decoration-none me-1"><i class="fas fa-paperclip"></i> 2</a>`;
+                if(doc['ไฟล์ 3']) filesHtml += `<a href="${doc['ไฟล์ 3']}" target="_blank" class="badge bg-light text-primary border text-decoration-none"><i class="fas fa-paperclip"></i> 3</a>`;
 
                 const cardHtml = `
                     <div class="doc-item">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge ${badgeClass} badge-custom shadow-sm">${doc['สถานะ']}</span>
-                            <small class="text-muted"><i class="far fa-clock me-1"></i>${formatDate(doc['วันที่ลงรับ'])}</small>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge ${badgeClass} badge-custom">${doc['สถานะ']}</span>
+                            <small class="text-muted"><i class="far fa-calendar me-1"></i>${formatDate(doc['วันที่ลงรับ'])}</small>
                         </div>
-                        <div class="doc-title"><i class="fas fa-hashtag me-1 text-muted fs-6"></i> ${doc['เลขหนังสือ']}</div>
-                        <p class="mb-3 text-dark fw-medium lh-sm">${doc['เรื่อง']}</p>
+                        <div class="fw-bold text-primary mb-1">${doc['เลขหนังสือ']}</div>
+                        <div class="small text-dark mb-2">${doc['เรื่อง']}</div>
                         
-                        <div class="d-flex flex-column mb-3" style="font-size: 0.9rem; color: #475569;">
-                            <div class="mb-1"><i class="fas fa-building me-2 text-primary"></i>จาก: ${doc['จาก']}</div>
-                            <div class="mb-1"><i class="fas fa-user-tie me-2 text-primary"></i>ถึง: ${doc['ถึง']}</div>
-                            ${doc['ผู้รับผิดชอบ'] !== '-' ? `<div class="text-success fw-bold"><i class="fas fa-user-check me-2"></i>ผู้รับผิดชอบ: ${doc['ผู้รับผิดชอบ']}</div>` : ''}
+                        <div class="small text-muted mb-2">
+                            <div><i class="fas fa-long-arrow-alt-right me-1"></i>ถึง: ${doc['ถึง']}</div>
+                            ${doc['ผู้รับผิดชอบ'] !== '-' ? `<div class="text-success"><i class="fas fa-user-check me-1"></i>ผู้รับ: ${doc['ผู้รับผิดชอบ']}</div>` : ''}
                         </div>
                         
-                        ${filesHtml ? `<div class="mb-3 bg-white p-2 rounded-3 border">${filesHtml}</div>` : ''}
-                        
-                        <div class="pt-2 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm me-2 fw-bold" onclick="openActionModal('${doc['DocID']}')">อัปเดตสถานะ</button>
-                            <button class="btn btn-sm btn-light rounded-circle shadow-sm text-danger d-flex justify-content-center align-items-center" onclick="deleteDoc('${doc['DocID']}')" style="width: 35px; height: 35px;">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                            <div>${filesHtml}</div>
+                            <div>
+                                <button class="btn btn-sm btn-light text-primary rounded-pill px-3 shadow-sm border" onclick="openActionModal('${doc['DocID']}')">จัดการ</button>
+                                <button class="btn btn-sm btn-white text-danger border-0 ms-1" onclick="deleteDoc('${doc['DocID']}')"><i class="fas fa-trash-alt"></i></button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -616,6 +724,7 @@
             });
         }
 
+        // --- Action Handlers ---
         function openActionModal(docId) {
             document.getElementById('actionDocId').value = docId;
             document.getElementById('actionAssignTo').value = '-';
@@ -644,34 +753,28 @@
             };
 
             actionModal.hide();
-            showLoader('กำลังอัปเดตข้อมูลและส่งอีเมลแจ้งเตือน...');
+            showLoader('อัปเดตข้อมูล...');
             const res = await fetchGAS('updateDocStatus', payload);
             hideLoader();
             
             if(res) {
-                Toast.fire({ icon: 'success', title: 'อัปเดตสถานะเอกสารสำเร็จ' });
+                Toast.fire({ icon: 'success', title: 'สำเร็จ' });
                 loadDocuments();
             }
         }
 
         async function deleteDoc(docId) {
             const confirm = await Swal.fire({
-                title: 'ยืนยันการลบ?',
-                text: 'คุณต้องการลบหนังสือรหัสนี้ใช่หรือไม่? (ไม่สามารถกู้คืนได้)',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'ใช่, ลบข้อมูล',
-                cancelButtonText: 'ยกเลิก'
+                title: 'ยืนยันการลบ', text: 'ไม่สามารถกู้คืนได้', icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'ลบ', cancelButtonText: 'ยกเลิก'
             });
 
             if(confirm.isConfirmed) {
-                showLoader('กำลังลบข้อมูล...');
+                showLoader('กำลังลบ...');
                 const res = await fetchGAS('deleteDoc', { id: docId });
                 hideLoader();
                 if(res) {
-                    Toast.fire({ icon: 'success', title: 'ลบข้อมูลเรียบร้อยแล้ว' });
+                    Toast.fire({ icon: 'success', title: 'ลบเรียบร้อย' });
                     loadDocuments();
                 }
             }
