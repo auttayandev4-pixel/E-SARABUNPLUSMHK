@@ -16,12 +16,12 @@
     
     <style>
         :root {
-            --primary: #1e3a8a; /* Deep Blue */
+            --primary: #1e3a8a; 
             --primary-light: #3b82f6;
-            --dark-card: #0f172a; /* Slate 900 for Dark Cards */
+            --dark-card: #0f172a; 
             --bg-color: #f0f4f8;
             --text-dark: #1e293b;
-            --success: #10b981; /* Green Progress */
+            --success: #10b981; 
         }
 
         body { 
@@ -32,7 +32,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Header Curve */
         .header-curve {
             background: linear-gradient(135deg, #1e3a8a, #2563eb);
             border-bottom-left-radius: 40px;
@@ -47,154 +46,102 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Main Container */
         .main-container { position: relative; z-index: 20; padding: 0 15px; margin-top: 20px; }
 
-        /* Dashboard Hero Card (Dark) */
         .hero-card {
-            background: var(--dark-card);
-            border-radius: 24px;
-            padding: 24px;
-            color: white;
-            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
-            margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
+            background: var(--dark-card); border-radius: 24px; padding: 24px; color: white;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2); margin-bottom: 25px; position: relative;
         }
         
-        /* Circular Progress Indicator */
         .progress-circle {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            background: conic-gradient(var(--success) 0%, #1e293b 0%);
-            position: relative;
+            width: 70px; height: 70px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; position: relative;
         }
         .progress-circle::after {
-            content: ""; position: absolute;
-            width: 54px; height: 54px;
-            background: var(--dark-card);
-            border-radius: 50%;
+            content: ""; position: absolute; width: 54px; height: 54px;
+            background: var(--dark-card); border-radius: 50%;
         }
         .progress-value { position: relative; z-index: 10; font-weight: 700; font-size: 1.1rem; }
 
-        .btn-action-dark {
-            background: var(--primary-light); color: white;
-            border: none; border-radius: 12px; padding: 8px 16px;
-            font-size: 0.85rem; font-weight: 500;
-        }
-
-        /* Menu Grid (Menu Utama) */
         .menu-header { font-weight: 600; font-size: 1.1rem; margin-bottom: 12px; color: var(--text-dark); }
-        .menu-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-            margin-bottom: 25px;
-        }
+        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .menu-item {
-            background: #e0f2fe; border-radius: 16px;
-            padding: 15px 5px; display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; color: var(--primary); transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            cursor: pointer;
+            background: #e0f2fe; border-radius: 16px; padding: 15px 5px; 
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--primary); transition: all 0.3s; cursor: pointer;
         }
         .menu-item.active { background: var(--dark-card); color: white; }
         .menu-item i { font-size: 1.5rem; margin-bottom: 8px; }
-        .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; line-height: 1.2; }
+        .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        /* Horizontal Scroll Cards (Kategori) */
-        .h-scroll-container {
-            display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px;
-            scrollbar-width: none; /* Firefox */
+        /* UI Filter Pills */
+        .h-scroll-container { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; scrollbar-width: none; }
+        .h-scroll-container::-webkit-scrollbar { display: none; }
+        .filter-pill {
+            padding: 8px 16px; border-radius: 20px; background: #e2e8f0; color: #475569;
+            font-size: 0.8rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.3s;
         }
-        .h-scroll-container::-webkit-scrollbar { display: none; } /* Chrome */
-        .status-card {
-            min-width: 140px; background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 16px; padding: 15px; color: white; flex-shrink: 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer;
-            border-bottom: 4px solid transparent;
-        }
-        .status-card.pending { border-bottom-color: #f59e0b; }
-        .status-card.assigned { border-bottom-color: #3b82f6; }
-        .status-card.completed { border-bottom-color: #10b981; }
-        .status-count { font-size: 1.8rem; font-weight: 700; line-height: 1; margin: 10px 0; }
+        .filter-pill.active { background: var(--primary-light); color: white; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
 
-        /* Document List Card */
         .doc-item {
             background: #ffffff; border-radius: 16px; padding: 18px; margin-bottom: 12px;
-            border-left: 5px solid var(--primary-light);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border-left: 5px solid var(--primary-light); box-shadow: 0 4px 15px rgba(0,0,0,0.04);
         }
         .badge-custom { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
 
-        /* Bottom Navigation */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
-            background: #ffffff; display: flex; justify-content: space-around; align-items: center;
-            border-radius: 24px 24px 0 0; box-shadow: 0 -5px 25px rgba(0,0,0,0.06);
-            z-index: 1000; padding: 0 10px;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #ffffff; 
+            display: flex; justify-content: space-around; align-items: center;
+            border-radius: 24px 24px 0 0; box-shadow: 0 -5px 25px rgba(0,0,0,0.06); z-index: 1000;
         }
         .nav-link-btn {
-            display: flex; flex-direction: column; align-items: center;
-            color: #94a3b8; text-decoration: none; width: 60px; transition: 0.3s;
-            background: none; border: none; padding: 0;
+            display: flex; flex-direction: column; align-items: center; color: #94a3b8; 
+            width: 60px; transition: 0.3s; background: none; border: none; padding: 0;
         }
         .nav-link-btn.active { color: var(--primary); }
         .nav-link-btn i { font-size: 1.3rem; margin-bottom: 4px; transition: 0.3s; }
         .nav-link-btn.active i { transform: translateY(-3px); }
         .nav-link-btn span { font-size: 0.7rem; font-weight: 600; }
 
-        /* Floating Center FAB with Text */
         .fab-container { position: relative; width: 70px; height: 75px; display: flex; flex-direction: column; align-items: center; }
         .fab-button {
-            position: absolute; top: -25px;
-            width: 55px; height: 55px;
+            position: absolute; top: -25px; width: 55px; height: 55px;
             background: linear-gradient(135deg, var(--primary-light), var(--primary));
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 1.5rem;
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            color: white; font-size: 1.5rem; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
             border: 4px solid var(--bg-color); cursor: pointer; transition: 0.3s;
         }
         .fab-button:active { transform: scale(0.95); }
-        .fab-text { position: absolute; bottom: 8px; font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-align: center; width: 100%; }
-        .fab-container.active .fab-text { color: var(--primary); }
+        .fab-text { position: absolute; bottom: 8px; font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
 
-        /* View Control */
         .section-view { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
         .section-view.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* Forms */
         .glass-form { background: white; border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .form-floating > .form-control, .form-floating > .form-select { border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc; }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); border: none; }
 
-        /* Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);
             z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center;
         }
         .spinner-border { color: var(--primary-light); }
-        
         .footer { text-align: center; font-size: 0.75rem; color: #94a3b8; margin: 20px 0 30px 0; }
     </style>
 </head>
 <body>
 
-    <!-- Header Area -->
     <div class="header-curve"></div>
     <div class="header-content">
         <div class="d-flex align-items-center">
-            <div class="bg-white rounded-circle p-2 me-3 shadow-sm d-flex justify-content-center align-items-center" style="width: 45px; height: 45px;">
-                <img src="https://i.postimg.cc/QxcK2wrM/baen-nex-r-E-SARANBUN-PLUS-mhasarkham.png" style="width: 100%; border-radius: 50%;">
+            <div class="bg-white rounded-circle p-1 me-3 shadow-sm d-flex justify-content-center align-items-center" style="width: 55px; height: 55px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Seal_of_the_Ministry_of_Culture_of_Thailand.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" style="width: 100%; border-radius: 50%;">
             </div>
             <div class="text-white">
                 <h5 class="mb-0 fw-bold">E-SARABUN PLUS</h5>
                 <small class="opacity-75">สวจ.มหาสารคาม</small>
             </div>
-        </div>
-        <div class="text-white position-relative">
-            <i class="fas fa-bell fs-5"></i>
-            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
         </div>
     </div>
 
@@ -203,7 +150,6 @@
         <!-- 1. Dashboard View -->
         <div id="dashboard" class="section-view active">
             
-            <!-- Dashboard Hero Stat Card -->
             <div class="hero-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
@@ -219,51 +165,38 @@
                         <span class="small text-white-50">เฉพาะเดือนนี้:</span>
                         <span class="fw-bold ms-1" id="statMonthly">0</span>
                     </div>
-                    <button class="btn-action-dark" onclick="loadDocuments()"><i class="fas fa-sync-alt me-1"></i> รีเฟรช</button>
+                    <button class="btn btn-sm btn-outline-light rounded-pill" onclick="loadDocuments()"><i class="fas fa-sync-alt me-1"></i> รีเฟรช</button>
                 </div>
             </div>
 
-            <!-- Menu Utama (Grid) -->
-            <div class="menu-header">เมนูจัดการหลัก</div>
+            <!-- Status Filters (Menu Grid) -->
+            <div class="menu-header">สถานะเอกสาร</div>
             <div class="menu-grid">
-                <div class="menu-item active" onclick="filterDocs('all')">
-                    <i class="fas fa-book-open"></i>
-                    <span>ทั้งหมด</span>
+                <div class="menu-item active" onclick="filterByStatus('all')">
+                    <i class="fas fa-book-open"></i><span>ทั้งหมด</span>
                 </div>
-                <div class="menu-item" onclick="filterDocs('รอการพิจารณา')">
-                    <i class="fas fa-hourglass-half text-warning"></i>
-                    <span>รอดำเนินการ</span>
+                <div class="menu-item" onclick="filterByStatus('รอการพิจารณา')">
+                    <i class="fas fa-hourglass-half text-warning"></i><span>รอพิจารณา</span>
                 </div>
-                <div class="menu-item" onclick="filterDocs('มอบหมายแล้ว')">
-                    <i class="fas fa-user-check text-primary"></i>
-                    <span>มอบหมายแล้ว</span>
+                <div class="menu-item" onclick="filterByStatus('มอบหมายแล้ว')">
+                    <i class="fas fa-user-check text-primary"></i><span>มอบหมายแล้ว</span>
                 </div>
-                <div class="menu-item" onclick="filterDocs('เสร็จสิ้น')">
-                    <i class="fas fa-check-circle text-success"></i>
-                    <span>เสร็จสิ้น</span>
+                <div class="menu-item" onclick="filterByStatus('เสร็จสิ้น')">
+                    <i class="fas fa-check-circle text-success"></i><span>เสร็จสิ้น</span>
                 </div>
             </div>
 
-            <!-- Horizontal Scroll Kategori -->
-            <div class="menu-header d-flex justify-content-between align-items-end">
-                <span>สถิติแยกตามสถานะ</span>
+            <!-- Department Filters (H-Scroll Pills) -->
+            <div class="menu-header mt-4 mb-2 d-flex justify-content-between align-items-end">
+                <span><i class="fas fa-filter me-2 text-primary"></i>กรองตามกลุ่ม/ฝ่าย</span>
             </div>
-            <div class="h-scroll-container mb-4">
-                <div class="status-card pending">
-                    <div class="small text-white-50">รอการพิจารณา</div>
-                    <div class="status-count" id="statPending">0</div>
-                    <div class="small"><i class="fas fa-clock me-1"></i>รายการ</div>
-                </div>
-                <div class="status-card assigned">
-                    <div class="small text-white-50">มอบหมายงานแล้ว</div>
-                    <div class="status-count" id="statAssigned">0</div>
-                    <div class="small"><i class="fas fa-users me-1"></i>รายการ</div>
-                </div>
-                <div class="status-card completed">
-                    <div class="small text-white-50">ดำเนินการเสร็จสิ้น</div>
-                    <div class="status-count" id="statCompleted">0</div>
-                    <div class="small"><i class="fas fa-check me-1"></i>รายการ</div>
-                </div>
+            <div class="h-scroll-container mb-4" id="deptFilters">
+                <div class="filter-pill active" onclick="filterByDept('all', this)">ทุกกลุ่ม/ฝ่าย</div>
+                <div class="filter-pill" onclick="filterByDept('บริหารทั่วไป', this)">บริหารทั่วไป</div>
+                <div class="filter-pill" onclick="filterByDept('ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม', this)">ส่งเสริมศาสนาฯ</div>
+                <div class="filter-pill" onclick="filterByDept('ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม', this)">ยุทธศาสตร์ฯ</div>
+                <div class="filter-pill" onclick="filterByDept('พิธีการศพที่ได้รับพระราชทาน', this)">พิธีการศพฯ</div>
+                <div class="filter-pill" onclick="filterByDept('กิจการพิเศษ', this)">กิจการพิเศษ</div>
             </div>
 
             <!-- Document List -->
@@ -363,6 +296,7 @@
                                     <option value="ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม">ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม</option>
                                     <option value="ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม">ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม</option>
                                     <option value="พิธีการศพที่ได้รับพระราชทาน">พิธีการศพที่ได้รับพระราชทาน</option>
+                                    <option value="กิจการพิเศษ">กิจการพิเศษ</option>
                                 </select>
                                 <label>กลุ่ม/ฝ่าย</label>
                             </div>
@@ -401,36 +335,21 @@
 
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <!-- 1. Home -->
         <button class="nav-link-btn active" onclick="switchTab('dashboard', this)">
-            <i class="fas fa-home"></i>
-            <span>หน้าหลัก</span>
+            <i class="fas fa-home"></i><span>หน้าหลัก</span>
         </button>
-        
-        <!-- 2. Search / Reports -->
-        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterDocs('all');">
-            <i class="fas fa-search"></i>
-            <span>ค้นหา</span>
+        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterByStatus('all'); filterByDept('all', document.querySelectorAll('.filter-pill')[0]);">
+            <i class="fas fa-search"></i><span>ค้นหา</span>
         </button>
-
-        <!-- 3. Center FAB (Add) -->
         <div class="fab-container" onclick="switchTab('receive', this)">
-            <div class="fab-button">
-                <i class="fas fa-plus"></i>
-            </div>
+            <div class="fab-button"><i class="fas fa-plus"></i></div>
             <div class="fab-text">ลงรับ</div>
         </div>
-
-        <!-- 4. Notifications / Status -->
-        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterDocs('รอการพิจารณา');">
-            <i class="fas fa-file-alt"></i>
-            <span>เอกสาร</span>
+        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterByStatus('รอการพิจารณา');">
+            <i class="fas fa-file-alt"></i><span>เอกสาร</span>
         </button>
-
-        <!-- 5. User / Profile -->
         <button class="nav-link-btn" onclick="switchTab('register', this)">
-            <i class="fas fa-user"></i>
-            <span>บุคลากร</span>
+            <i class="fas fa-user"></i><span>บุคลากร</span>
         </button>
     </div>
 
@@ -478,13 +397,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // ==========================================
-        // URL Web App จาก Google Apps Script (สำคัญ)
+        // URL Web App จาก Google Apps Script
         // ==========================================
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwpv28EecHmC1NqAkxh2ftKJxJnyQMxLE6WOBJFVB2g7_3_9k5O9szYui59fdapGC07/exec'; 
         
         let usersData = [];
-        let allDocsData = []; // เก็บข้อมูลหนังสือทั้งหมด
+        let allDocsData = []; 
         let actionModal;
+        
+        // ตัวแปรเก็บสถานะการกรองข้อมูล
+        let currentStatusFilter = 'all';
+        let currentDeptFilter = 'all';
 
         const Toast = Swal.mixin({
             toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
@@ -495,13 +418,12 @@
         style.innerHTML = `.swal2-popup { font-family: 'Prompt', sans-serif !important; border-radius: 20px !important; }`;
         document.head.appendChild(style);
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             actionModal = new bootstrap.Modal(document.getElementById('actionModal'));
-            loadUsers();
+            await loadUsers();
             loadDocuments();
         });
 
-        // Tab Switch & Nav Styling
         function switchTab(tabId, el) {
             document.querySelectorAll('.section-view').forEach(e => {
                 e.classList.remove('active');
@@ -514,7 +436,6 @@
                 setTimeout(() => target.classList.add('active'), 50);
             }, 50);
 
-            // รีเซ็ตปุ่มใน Bottom Nav
             document.querySelectorAll('.nav-link-btn, .fab-container').forEach(e => e.classList.remove('active'));
             if(el) el.classList.add('active');
         }
@@ -547,7 +468,30 @@
             }
         }
 
-        // --- Users & Register ---
+        // --- ระบบเช็ครหัสผ่าน ---
+        async function requirePasscode(callback) {
+            const { value: passcode } = await Swal.fire({
+                title: 'ยืนยันสิทธิ์',
+                input: 'password',
+                inputLabel: 'กรุณากรอกรหัสลับ 5 หลักเพื่อดำเนินการ',
+                inputPlaceholder: 'รหัสลับ...',
+                showCancelButton: true,
+                confirmButtonColor: '#1e3a8a',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+                inputAttributes: { maxlength: 10, autocapitalize: 'off', autocorrect: 'off' }
+            });
+
+            if (passcode) {
+                if (passcode === '12345') {
+                    callback();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'รหัสไม่ถูกต้อง', text: 'คุณไม่มีสิทธิ์ดำเนินการนี้', confirmButtonColor: '#1e3a8a' });
+                }
+            }
+        }
+
         async function loadUsers() {
             const data = await fetchGAS('getUsers', {});
             if(data) {
@@ -585,7 +529,6 @@
             }
         }
 
-        // --- Submit Doc ---
         function getBase64(file) {
             return new Promise((resolve, reject) => {
                 if(!file) return resolve(null);
@@ -608,6 +551,9 @@
                 if(f) files.push(await getBase64(f));
             }
 
+            // ส่งลิงก์ระบบแนบไปกับ Payload
+            const appUrl = window.location.href.split('?')[0];
+
             const payload = {
                 docNum: document.getElementById('docNum').value,
                 from: document.getElementById('docFrom').value,
@@ -615,7 +561,8 @@
                 details: document.getElementById('docDetails').value,
                 toName: selectedOption.value,
                 toEmail: selectedOption.dataset.email,
-                files: files
+                files: files,
+                appUrl: appUrl
             };
 
             const res = await fetchGAS('submitDoc', payload);
@@ -628,60 +575,65 @@
             }
         }
 
-        // --- Dashboard & Docs ---
         async function loadDocuments() {
             showLoader('กำลังอัปเดตข้อมูล...');
-            
-            // โหลดเอกสาร
             allDocsData = await fetchGAS('getDocs', {}) || [];
-            
-            // โหลดสถิติ
             const stats = await fetchGAS('getStats', {});
-            
             hideLoader();
             
-            // อัปเดต UI Dashboard
             if(stats) {
                 document.getElementById('statYearly').innerText = stats.yearly;
                 document.getElementById('statMonthly').innerText = stats.monthly;
                 document.getElementById('statPercent').innerText = stats.progressPercent + '%';
-                
-                // วาดกราฟวงกลม
                 document.getElementById('statProgress').style.background = `conic-gradient(var(--success) ${stats.progressPercent}%, #1e293b 0%)`;
-                
-                document.getElementById('statPending').innerText = stats.pending;
-                document.getElementById('statAssigned').innerText = stats.assigned;
-                document.getElementById('statCompleted').innerText = stats.completed;
             }
 
-            // แสดงรายการทั้งหมดเริ่มต้น
-            renderDocs('all');
+            renderDocs();
         }
 
-        // ฟังก์ชัน Filter และ Render การ์ด
-        function filterDocs(status) {
-            // อัปเดตปุ่ม Menu Grid ให้ Active
+        // ตัวกรองโดยสถานะ
+        function filterByStatus(status) {
+            currentStatusFilter = status;
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            const clickedMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(status === 'all' ? 'ทั้งหมด' : (status === 'รอการพิจารณา' ? 'รอดำเนิน' : status)));
+            const clickedMenu = Array.from(document.querySelectorAll('.menu-item')).find(el => el.innerText.includes(status === 'all' ? 'ทั้งหมด' : (status === 'รอการพิจารณา' ? 'รอพิจารณา' : status)));
             if(clickedMenu) clickedMenu.classList.add('active');
-
-            // อัปเดต Text Header
-            document.getElementById('currentFilterText').innerText = status === 'all' ? 'ทั้งหมด' : status;
-
-            renderDocs(status);
+            renderDocs();
         }
 
-        function renderDocs(filterStatus) {
+        // ตัวกรองโดยกลุ่ม/ฝ่าย
+        function filterByDept(dept, element) {
+            currentDeptFilter = dept;
+            if(element) {
+                document.querySelectorAll('.filter-pill').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+            }
+            renderDocs();
+        }
+
+        function renderDocs() {
             const container = document.getElementById('docContainer');
             container.innerHTML = '';
             
             let filteredData = allDocsData;
-            if (filterStatus !== 'all') {
-                filteredData = allDocsData.filter(doc => doc['สถานะ'].includes(filterStatus));
+            
+            // กรองสถานะ
+            if (currentStatusFilter !== 'all') {
+                filteredData = filteredData.filter(doc => doc['สถานะ'].includes(currentStatusFilter));
+            }
+
+            // กรองกลุ่ม/ฝ่าย (เทียบชื่อผู้รับ กับ ฐานข้อมูล Users)
+            if (currentDeptFilter !== 'all') {
+                filteredData = filteredData.filter(doc => {
+                    const user = usersData.find(u => u['ชื่อ-สกุล'] === doc['ถึง']);
+                    const docDept = user ? user['กลุ่ม/ฝ่าย'] : 'ไม่ระบุ';
+                    return docDept === currentDeptFilter;
+                });
             }
             
+            document.getElementById('currentFilterText').innerText = (currentStatusFilter === 'all' && currentDeptFilter === 'all') ? 'ทั้งหมด' : 'ที่กรองแล้ว';
+
             if(filteredData.length === 0) {
-                container.innerHTML = `<div class="text-center p-4 text-muted"><i class="fas fa-inbox fa-2x mb-2 opacity-50"></i><br>ไม่มีข้อมูล</div>`;
+                container.innerHTML = `<div class="text-center p-4 text-muted"><i class="fas fa-search fa-2x mb-3 opacity-50"></i><br>ไม่มีรายการที่ตรงกับเงื่อนไข</div>`;
                 return;
             }
             
@@ -724,13 +676,15 @@
             });
         }
 
-        // --- Action Handlers ---
+        // ขอดูรหัสผ่านก่อนเข้าจัดการเอกสาร
         function openActionModal(docId) {
-            document.getElementById('actionDocId').value = docId;
-            document.getElementById('actionAssignTo').value = '-';
-            document.getElementById('actionStatus').value = 'มอบหมายแล้ว';
-            document.getElementById('actionNote').value = '';
-            actionModal.show();
+            requirePasscode(() => {
+                document.getElementById('actionDocId').value = docId;
+                document.getElementById('actionAssignTo').value = '-';
+                document.getElementById('actionStatus').value = 'มอบหมายแล้ว';
+                document.getElementById('actionNote').value = '';
+                actionModal.show();
+            });
         }
 
         async function submitAction() {
@@ -749,35 +703,39 @@
                 status: document.getElementById('actionStatus').value,
                 assignedTo: assignedTo,
                 note: document.getElementById('actionNote').value,
-                targetEmail: targetEmail
+                targetEmail: targetEmail,
+                appUrl: window.location.href.split('?')[0]
             };
 
             actionModal.hide();
-            showLoader('อัปเดตข้อมูล...');
+            showLoader('อัปเดตข้อมูลและส่งแจ้งเตือน...');
             const res = await fetchGAS('updateDocStatus', payload);
             hideLoader();
             
             if(res) {
-                Toast.fire({ icon: 'success', title: 'สำเร็จ' });
+                Toast.fire({ icon: 'success', title: 'อัปเดตงานสำเร็จ' });
                 loadDocuments();
             }
         }
 
+        // ขอดูรหัสผ่านก่อนลบ
         async function deleteDoc(docId) {
-            const confirm = await Swal.fire({
-                title: 'ยืนยันการลบ', text: 'ไม่สามารถกู้คืนได้', icon: 'warning',
-                showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'ลบ', cancelButtonText: 'ยกเลิก'
-            });
+            requirePasscode(async () => {
+                const confirm = await Swal.fire({
+                    title: 'ยืนยันการลบ', text: 'เมื่อลบแล้วจะไม่สามารถกู้คืนได้', icon: 'warning',
+                    showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'ลบข้อมูล', cancelButtonText: 'ยกเลิก'
+                });
 
-            if(confirm.isConfirmed) {
-                showLoader('กำลังลบ...');
-                const res = await fetchGAS('deleteDoc', { id: docId });
-                hideLoader();
-                if(res) {
-                    Toast.fire({ icon: 'success', title: 'ลบเรียบร้อย' });
-                    loadDocuments();
+                if(confirm.isConfirmed) {
+                    showLoader('กำลังลบ...');
+                    const res = await fetchGAS('deleteDoc', { id: docId });
+                    hideLoader();
+                    if(res) {
+                        Toast.fire({ icon: 'success', title: 'ลบเรียบร้อย' });
+                        loadDocuments();
+                    }
                 }
-            }
+            });
         }
     </script>
 </body>
