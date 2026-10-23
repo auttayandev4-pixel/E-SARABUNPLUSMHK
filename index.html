@@ -74,14 +74,38 @@
         .menu-item i { font-size: 1.5rem; margin-bottom: 8px; }
         .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        /* UI Filter Pills */
-        .h-scroll-container { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; scrollbar-width: none; }
-        .h-scroll-container::-webkit-scrollbar { display: none; }
-        .filter-pill {
-            padding: 8px 16px; border-radius: 20px; background: #e2e8f0; color: #475569;
-            font-size: 0.8rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.3s;
+        /* --- UI Department Filters (อัปเดตใหม่) --- */
+        .dept-scroll-container { 
+            display: flex; overflow-x: auto; gap: 12px; 
+            padding: 5px 5px 20px 5px; scrollbar-width: none; scroll-behavior: smooth; 
         }
-        .filter-pill.active { background: var(--primary-light); color: white; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
+        .dept-scroll-container::-webkit-scrollbar { display: none; }
+        
+        .dept-card {
+            background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px;
+            padding: 12px 18px; min-width: 130px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; gap: 8px; color: #64748b; 
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; overflow: hidden;
+        }
+        .dept-card i { font-size: 1.4rem; transition: all 0.3s; }
+        .dept-card span { font-size: 0.75rem; font-weight: 600; text-align: center; white-space: nowrap; }
+        
+        .dept-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); color: var(--primary-light); }
+        
+        .dept-card.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; border-color: transparent; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            transform: translateY(-5px);
+        }
+        .dept-card.active i { transform: scale(1.2) rotate(5deg); }
+        .dept-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .dept-card.active::before { opacity: 1; }
+        /* ------------------------------------- */
 
         .doc-item {
             background: #ffffff; border-radius: 16px; padding: 18px; margin-bottom: 12px;
@@ -135,8 +159,9 @@
     <div class="header-curve"></div>
     <div class="header-content">
         <div class="d-flex align-items-center">
-            <div class="bg-white rounded-circle p-1 me-3 shadow-sm d-flex justify-content-center align-items-center" style="width: 55px; height: 55px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Seal_of_the_Ministry_of_Culture_of_Thailand.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" style="width: 100%; border-radius: 50%;">
+            <!-- แก้ไข Logo: แสดงผลสมบูรณ์ ไม่มีการตัดครอบทับ -->
+            <div class="bg-white shadow-sm d-flex justify-content-center align-items-center me-3" style="width: 60px; height: 60px; border-radius: 16px; padding: 6px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Seal_of_the_Ministry_of_Culture_of_Thailand.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <div class="text-white">
                 <h5 class="mb-0 fw-bold">E-SARABUN PLUS</h5>
@@ -169,7 +194,7 @@
                 </div>
             </div>
 
-            <!-- Status Filters (Menu Grid) -->
+            <!-- Status Filters -->
             <div class="menu-header">สถานะเอกสาร</div>
             <div class="menu-grid">
                 <div class="menu-item active" onclick="filterByStatus('all')">
@@ -186,21 +211,33 @@
                 </div>
             </div>
 
-            <!-- Department Filters (H-Scroll Pills) -->
+            <!-- Department Filters (อัปเดตใหม่) -->
             <div class="menu-header mt-4 mb-2 d-flex justify-content-between align-items-end">
-                <span><i class="fas fa-filter me-2 text-primary"></i>กรองตามกลุ่ม/ฝ่าย</span>
+                <span><i class="fas fa-layer-group me-2 text-primary"></i>กรองตามกลุ่ม/ฝ่าย</span>
             </div>
-            <div class="h-scroll-container mb-4" id="deptFilters">
-                <div class="filter-pill active" onclick="filterByDept('all', this)">ทุกกลุ่ม/ฝ่าย</div>
-                <div class="filter-pill" onclick="filterByDept('บริหารทั่วไป', this)">บริหารทั่วไป</div>
-                <div class="filter-pill" onclick="filterByDept('ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม', this)">ส่งเสริมศาสนาฯ</div>
-                <div class="filter-pill" onclick="filterByDept('ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม', this)">ยุทธศาสตร์ฯ</div>
-                <div class="filter-pill" onclick="filterByDept('พิธีการศพที่ได้รับพระราชทาน', this)">พิธีการศพฯ</div>
-                <div class="filter-pill" onclick="filterByDept('กิจการพิเศษ', this)">กิจการพิเศษ</div>
+            <div class="dept-scroll-container" id="deptFilters">
+                <div class="dept-card active" onclick="filterByDept('all', this)">
+                    <i class="fas fa-th-large"></i><span>ทุกกลุ่ม/ฝ่าย</span>
+                </div>
+                <div class="dept-card" onclick="filterByDept('บริหารทั่วไป', this)">
+                    <i class="fas fa-building"></i><span>บริหารทั่วไป</span>
+                </div>
+                <div class="dept-card" onclick="filterByDept('ส่งเสริมศาสนา ศิลปะ และวัฒนธรรม', this)">
+                    <i class="fas fa-palette"></i><span>ส่งเสริมศาสนาฯ</span>
+                </div>
+                <div class="dept-card" onclick="filterByDept('ยุทธศาสตร์และเฝ้าระวังทางวัฒนธรรม', this)">
+                    <i class="fas fa-chart-pie"></i><span>ยุทธศาสตร์ฯ</span>
+                </div>
+                <div class="dept-card" onclick="filterByDept('พิธีการศพที่ได้รับพระราชทาน', this)">
+                    <i class="fas fa-crown"></i><span>พิธีการศพฯ</span>
+                </div>
+                <div class="dept-card" onclick="filterByDept('กิจการพิเศษ', this)">
+                    <i class="fas fa-star"></i><span>กิจการพิเศษ</span>
+                </div>
             </div>
 
             <!-- Document List -->
-            <div class="menu-header"><i class="fas fa-list me-2"></i>รายการหนังสือ <span id="currentFilterText" class="badge bg-primary ms-2 rounded-pill fw-normal">ทั้งหมด</span></div>
+            <div class="menu-header mt-2"><i class="fas fa-list me-2"></i>รายการหนังสือ <span id="currentFilterText" class="badge bg-primary ms-2 rounded-pill fw-normal">ทั้งหมด</span></div>
             <div id="docContainer">
                 <div class="text-center p-4 text-muted">กำลังโหลดข้อมูล...</div>
             </div>
@@ -338,7 +375,7 @@
         <button class="nav-link-btn active" onclick="switchTab('dashboard', this)">
             <i class="fas fa-home"></i><span>หน้าหลัก</span>
         </button>
-        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterByStatus('all'); filterByDept('all', document.querySelectorAll('.filter-pill')[0]);">
+        <button class="nav-link-btn" onclick="switchTab('dashboard', this); filterByStatus('all'); filterByDept('all', document.querySelectorAll('.dept-card')[0]);">
             <i class="fas fa-search"></i><span>ค้นหา</span>
         </button>
         <div class="fab-container" onclick="switchTab('receive', this)">
@@ -405,7 +442,6 @@
         let allDocsData = []; 
         let actionModal;
         
-        // ตัวแปรเก็บสถานะการกรองข้อมูล
         let currentStatusFilter = 'all';
         let currentDeptFilter = 'all';
 
@@ -468,7 +504,7 @@
             }
         }
 
-        // --- ระบบเช็ครหัสผ่าน ---
+        // --- รหัสลับ ---
         async function requirePasscode(callback) {
             const { value: passcode } = await Swal.fire({
                 title: 'ยืนยันสิทธิ์',
@@ -551,7 +587,6 @@
                 if(f) files.push(await getBase64(f));
             }
 
-            // ส่งลิงก์ระบบแนบไปกับ Payload
             const appUrl = window.location.href.split('?')[0];
 
             const payload = {
@@ -591,7 +626,6 @@
             renderDocs();
         }
 
-        // ตัวกรองโดยสถานะ
         function filterByStatus(status) {
             currentStatusFilter = status;
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -600,12 +634,14 @@
             renderDocs();
         }
 
-        // ตัวกรองโดยกลุ่ม/ฝ่าย
         function filterByDept(dept, element) {
             currentDeptFilter = dept;
             if(element) {
-                document.querySelectorAll('.filter-pill').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.dept-card').forEach(el => el.classList.remove('active'));
                 element.classList.add('active');
+                
+                // สั่งให้เลื่อน scroll อัตโนมัติไปที่การ์ดที่กด (เพื่อ UX ที่ดีบนมือถือ)
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
             renderDocs();
         }
@@ -616,12 +652,10 @@
             
             let filteredData = allDocsData;
             
-            // กรองสถานะ
             if (currentStatusFilter !== 'all') {
                 filteredData = filteredData.filter(doc => doc['สถานะ'].includes(currentStatusFilter));
             }
 
-            // กรองกลุ่ม/ฝ่าย (เทียบชื่อผู้รับ กับ ฐานข้อมูล Users)
             if (currentDeptFilter !== 'all') {
                 filteredData = filteredData.filter(doc => {
                     const user = usersData.find(u => u['ชื่อ-สกุล'] === doc['ถึง']);
@@ -676,7 +710,6 @@
             });
         }
 
-        // ขอดูรหัสผ่านก่อนเข้าจัดการเอกสาร
         function openActionModal(docId) {
             requirePasscode(() => {
                 document.getElementById('actionDocId').value = docId;
@@ -718,7 +751,6 @@
             }
         }
 
-        // ขอดูรหัสผ่านก่อนลบ
         async function deleteDoc(docId) {
             requirePasscode(async () => {
                 const confirm = await Swal.fire({
