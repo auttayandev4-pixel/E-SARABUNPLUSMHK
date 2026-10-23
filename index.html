@@ -64,15 +64,33 @@
         .progress-value { position: relative; z-index: 10; font-weight: 700; font-size: 1.1rem; }
 
         .menu-header { font-weight: 600; font-size: 1.1rem; margin-bottom: 12px; color: var(--text-dark); }
+        
+        /* --- UI Menu Grid (สถานะเอกสารพร้อมตัวเลข) --- */
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .menu-item {
-            background: #e0f2fe; border-radius: 16px; padding: 15px 5px; 
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--primary); transition: all 0.3s; cursor: pointer;
+            background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 12px 5px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
-        .menu-item.active { background: var(--dark-card); color: white; }
-        .menu-item i { font-size: 1.5rem; margin-bottom: 8px; }
-        .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; }
+        .menu-item:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .menu-item.active { 
+            background: var(--dark-card); border-color: transparent;
+            box-shadow: 0 10px 20px rgba(15,23,42,0.3); transform: translateY(-4px); 
+        }
+        .menu-item i { font-size: 1.4rem; margin-bottom: 4px; transition: 0.3s; }
+        .menu-item .status-label { font-size: 0.75rem; font-weight: 500; text-align: center; color: #64748b; transition: 0.3s; }
+        .menu-item .status-count { font-size: 1.3rem; font-weight: 700; margin-top: 2px; line-height: 1; transition: 0.3s; }
+        
+        /* Specific Colors */
+        .menu-item.all i, .menu-item.all .status-count { color: var(--primary); }
+        .menu-item.pending i, .menu-item.pending .status-count { color: #f59e0b; } /* Warning/Orange */
+        .menu-item.assigned i, .menu-item.assigned .status-count { color: #3b82f6; } /* Info/Blue */
+        .menu-item.completed i, .menu-item.completed .status-count { color: #10b981; } /* Success/Green */
+        
+        /* Active State Overrides */
+        .menu-item.active i, .menu-item.active .status-count { color: #ffffff; }
+        .menu-item.active .status-label { color: #cbd5e1; }
+        /* ------------------------------------------- */
 
         /* --- UI Department Filters --- */
         .dept-scroll-container { 
@@ -80,7 +98,6 @@
             padding: 5px 5px 20px 5px; scrollbar-width: none; scroll-behavior: smooth; 
         }
         .dept-scroll-container::-webkit-scrollbar { display: none; }
-        
         .dept-card {
             background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px;
             padding: 12px 18px; min-width: 130px; display: flex; flex-direction: column; 
@@ -90,21 +107,13 @@
         }
         .dept-card i { font-size: 1.4rem; transition: all 0.3s; }
         .dept-card span { font-size: 0.75rem; font-weight: 600; text-align: center; white-space: nowrap; }
-        
         .dept-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); color: var(--primary-light); }
-        
         .dept-card.active {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white; border-color: transparent; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
             transform: translateY(-5px);
         }
         .dept-card.active i { transform: scale(1.2) rotate(5deg); }
-        .dept-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
-        }
-        .dept-card.active::before { opacity: 1; }
         /* ------------------------------------- */
 
         .doc-item {
@@ -194,20 +203,28 @@
                 </div>
             </div>
 
-            <!-- Status Filters -->
+            <!-- Status Filters (อัปเดตแบบมีตัวเลข) -->
             <div class="menu-header">สถานะเอกสาร</div>
             <div class="menu-grid">
-                <div class="menu-item active" onclick="filterByStatus('all')">
-                    <i class="fas fa-book-open"></i><span>ทั้งหมด</span>
+                <div class="menu-item all active" onclick="filterByStatus('all')">
+                    <i class="fas fa-book-open"></i>
+                    <span class="status-label">ทั้งหมด</span>
+                    <span class="status-count" id="countAll">0</span>
                 </div>
-                <div class="menu-item" onclick="filterByStatus('รอการพิจารณา')">
-                    <i class="fas fa-hourglass-half text-warning"></i><span>รอพิจารณา</span>
+                <div class="menu-item pending" onclick="filterByStatus('รอการพิจารณา')">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span class="status-label">รอพิจารณา</span>
+                    <span class="status-count" id="countPending">0</span>
                 </div>
-                <div class="menu-item" onclick="filterByStatus('มอบหมายแล้ว')">
-                    <i class="fas fa-user-check text-primary"></i><span>มอบหมายแล้ว</span>
+                <div class="menu-item assigned" onclick="filterByStatus('มอบหมายแล้ว')">
+                    <i class="fas fa-user-check"></i>
+                    <span class="status-label">มอบหมายแล้ว</span>
+                    <span class="status-count" id="countAssigned">0</span>
                 </div>
-                <div class="menu-item" onclick="filterByStatus('เสร็จสิ้น')">
-                    <i class="fas fa-check-circle text-success"></i><span>เสร็จสิ้น</span>
+                <div class="menu-item completed" onclick="filterByStatus('เสร็จสิ้น')">
+                    <i class="fas fa-check-circle"></i>
+                    <span class="status-label">เสร็จสิ้น</span>
+                    <span class="status-count" id="countCompleted">0</span>
                 </div>
             </div>
 
@@ -645,31 +662,45 @@
         }
 
         function renderDocs() {
-            const container = document.getElementById('docContainer');
-            container.innerHTML = '';
-            
-            let filteredData = allDocsData;
-            
-            if (currentStatusFilter !== 'all') {
-                filteredData = filteredData.filter(doc => doc['สถานะ'].includes(currentStatusFilter));
-            }
-
+            // 1. ประมวลผลข้อมูลตามกลุ่ม/ฝ่ายที่เลือก เพื่อใช้อัปเดตตัวเลขบนปุ่มสถานะ
+            let deptFilteredData = allDocsData;
             if (currentDeptFilter !== 'all') {
-                filteredData = filteredData.filter(doc => {
+                deptFilteredData = allDocsData.filter(doc => {
                     const user = usersData.find(u => u['ชื่อ-สกุล'] === doc['ถึง']);
                     const docDept = user ? user['กลุ่ม/ฝ่าย'] : 'ไม่ระบุ';
                     return docDept === currentDeptFilter;
                 });
             }
+
+            // คำนวณตัวเลขสำหรับแต่ละสถานะ
+            const countAll = deptFilteredData.length;
+            const countPending = deptFilteredData.filter(doc => doc['สถานะ'] === 'รอการพิจารณา').length;
+            const countAssigned = deptFilteredData.filter(doc => doc['สถานะ'] === 'มอบหมายแล้ว').length;
+            const countCompleted = deptFilteredData.filter(doc => doc['สถานะ'] === 'เสร็จสิ้น').length;
+
+            // อัปเดตตัวเลขแสดงผลบนปุ่ม
+            document.getElementById('countAll').innerText = countAll;
+            document.getElementById('countPending').innerText = countPending;
+            document.getElementById('countAssigned').innerText = countAssigned;
+            document.getElementById('countCompleted').innerText = countCompleted;
+
+            // 2. กรองข้อมูลต่อตามสถานะเอกสารเพื่อนำไปแสดงรายการ
+            const container = document.getElementById('docContainer');
+            container.innerHTML = '';
+            
+            let finalData = deptFilteredData;
+            if (currentStatusFilter !== 'all') {
+                finalData = finalData.filter(doc => doc['สถานะ'].includes(currentStatusFilter));
+            }
             
             document.getElementById('currentFilterText').innerText = (currentStatusFilter === 'all' && currentDeptFilter === 'all') ? 'ทั้งหมด' : 'ที่กรองแล้ว';
 
-            if(filteredData.length === 0) {
+            if(finalData.length === 0) {
                 container.innerHTML = `<div class="text-center p-4 text-muted"><i class="fas fa-search fa-2x mb-3 opacity-50"></i><br>ไม่มีรายการที่ตรงกับเงื่อนไข</div>`;
                 return;
             }
             
-            filteredData.forEach(doc => {
+            finalData.forEach(doc => {
                 let badgeClass = 'bg-secondary';
                 if(doc['สถานะ'] === 'รอการพิจารณา') badgeClass = 'bg-warning text-dark';
                 if(doc['สถานะ'] === 'มอบหมายแล้ว') badgeClass = 'bg-info text-dark';
@@ -698,9 +729,7 @@
                         <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
                             <div>${filesHtml}</div>
                             <div>
-                                <!-- นำ RequirePasscode ออก ให้กดแล้วเด้ง Modal เลย -->
                                 <button class="btn btn-sm btn-light text-primary rounded-pill px-3 shadow-sm border" onclick="openActionModal('${doc['DocID']}')">จัดการ</button>
-                                <!-- บังคับ RequirePasscode เฉพาะการลบ -->
                                 <button class="btn btn-sm btn-white text-danger border-0 ms-1" onclick="deleteDoc('${doc['DocID']}')"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
@@ -710,7 +739,6 @@
             });
         }
 
-        // --- แก้ไข: ถอดรหัสผ่านออกจากการจัดการเอกสาร ---
         function openActionModal(docId) {
             document.getElementById('actionDocId').value = docId;
             document.getElementById('actionAssignTo').value = '-';
@@ -750,7 +778,6 @@
             }
         }
 
-        // --- แก้ไข: ยังคงบังคับใช้รหัสผ่านสำหรับการลบ ---
         async function deleteDoc(docId) {
             requirePasscode(async () => {
                 const confirm = await Swal.fire({
