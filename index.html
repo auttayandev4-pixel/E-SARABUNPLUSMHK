@@ -74,7 +74,7 @@
         .menu-item i { font-size: 1.5rem; margin-bottom: 8px; }
         .menu-item span { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        /* --- UI Department Filters (อัปเดตใหม่) --- */
+        /* --- UI Department Filters --- */
         .dept-scroll-container { 
             display: flex; overflow-x: auto; gap: 12px; 
             padding: 5px 5px 20px 5px; scrollbar-width: none; scroll-behavior: smooth; 
@@ -159,7 +159,7 @@
     <div class="header-curve"></div>
     <div class="header-content">
         <div class="d-flex align-items-center">
-            <!-- แก้ไข Logo: แสดงผลสมบูรณ์ ไม่มีการตัดครอบทับ -->
+            <!-- Logo แสดงผลสมบูรณ์ -->
             <div class="bg-white shadow-sm d-flex justify-content-center align-items-center me-3" style="width: 60px; height: 60px; border-radius: 16px; padding: 6px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Seal_of_the_Ministry_of_Culture_of_Thailand.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
@@ -211,7 +211,7 @@
                 </div>
             </div>
 
-            <!-- Department Filters (อัปเดตใหม่) -->
+            <!-- Department Filters -->
             <div class="menu-header mt-4 mb-2 d-flex justify-content-between align-items-end">
                 <span><i class="fas fa-layer-group me-2 text-primary"></i>กรองตามกลุ่ม/ฝ่าย</span>
             </div>
@@ -434,7 +434,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // ==========================================
-        // URL Web App จาก Google Apps Script
+        // URL Web App จาก Google Apps Script (ตรวจสอบให้ตรงกับของคุณ)
         // ==========================================
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwpv28EecHmC1NqAkxh2ftKJxJnyQMxLE6WOBJFVB2g7_3_9k5O9szYui59fdapGC07/exec'; 
         
@@ -504,17 +504,17 @@
             }
         }
 
-        // --- รหัสลับ ---
+        // --- รหัสลับ (บังคับใช้เฉพาะตอนลบข้อมูล) ---
         async function requirePasscode(callback) {
             const { value: passcode } = await Swal.fire({
-                title: 'ยืนยันสิทธิ์',
+                title: 'ยืนยันสิทธิ์ผู้ดูแลระบบ',
                 input: 'password',
-                inputLabel: 'กรุณากรอกรหัสลับ 5 หลักเพื่อดำเนินการ',
+                inputLabel: 'กรุณากรอกรหัสลับ 5 หลักเพื่อลบข้อมูล',
                 inputPlaceholder: 'รหัสลับ...',
                 showCancelButton: true,
                 confirmButtonColor: '#1e3a8a',
                 cancelButtonColor: '#64748b',
-                confirmButtonText: 'ยืนยัน',
+                confirmButtonText: 'ยืนยันการลบ',
                 cancelButtonText: 'ยกเลิก',
                 inputAttributes: { maxlength: 10, autocapitalize: 'off', autocorrect: 'off' }
             });
@@ -523,7 +523,7 @@
                 if (passcode === '12345') {
                     callback();
                 } else {
-                    Swal.fire({ icon: 'error', title: 'รหัสไม่ถูกต้อง', text: 'คุณไม่มีสิทธิ์ดำเนินการนี้', confirmButtonColor: '#1e3a8a' });
+                    Swal.fire({ icon: 'error', title: 'รหัสไม่ถูกต้อง', text: 'คุณไม่มีสิทธิ์ลบข้อมูลนี้', confirmButtonColor: '#1e3a8a' });
                 }
             }
         }
@@ -639,8 +639,6 @@
             if(element) {
                 document.querySelectorAll('.dept-card').forEach(el => el.classList.remove('active'));
                 element.classList.add('active');
-                
-                // สั่งให้เลื่อน scroll อัตโนมัติไปที่การ์ดที่กด (เพื่อ UX ที่ดีบนมือถือ)
                 element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
             renderDocs();
@@ -700,7 +698,9 @@
                         <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
                             <div>${filesHtml}</div>
                             <div>
+                                <!-- นำ RequirePasscode ออก ให้กดแล้วเด้ง Modal เลย -->
                                 <button class="btn btn-sm btn-light text-primary rounded-pill px-3 shadow-sm border" onclick="openActionModal('${doc['DocID']}')">จัดการ</button>
+                                <!-- บังคับ RequirePasscode เฉพาะการลบ -->
                                 <button class="btn btn-sm btn-white text-danger border-0 ms-1" onclick="deleteDoc('${doc['DocID']}')"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
@@ -710,14 +710,13 @@
             });
         }
 
+        // --- แก้ไข: ถอดรหัสผ่านออกจากการจัดการเอกสาร ---
         function openActionModal(docId) {
-            requirePasscode(() => {
-                document.getElementById('actionDocId').value = docId;
-                document.getElementById('actionAssignTo').value = '-';
-                document.getElementById('actionStatus').value = 'มอบหมายแล้ว';
-                document.getElementById('actionNote').value = '';
-                actionModal.show();
-            });
+            document.getElementById('actionDocId').value = docId;
+            document.getElementById('actionAssignTo').value = '-';
+            document.getElementById('actionStatus').value = 'มอบหมายแล้ว';
+            document.getElementById('actionNote').value = '';
+            actionModal.show();
         }
 
         async function submitAction() {
@@ -751,6 +750,7 @@
             }
         }
 
+        // --- แก้ไข: ยังคงบังคับใช้รหัสผ่านสำหรับการลบ ---
         async function deleteDoc(docId) {
             requirePasscode(async () => {
                 const confirm = await Swal.fire({
